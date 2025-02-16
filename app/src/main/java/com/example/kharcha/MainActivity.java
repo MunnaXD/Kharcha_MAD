@@ -1,3 +1,5 @@
+//Login screen
+//amans screen
 package com.example.kharcha;
 
 import android.os.Bundle;
