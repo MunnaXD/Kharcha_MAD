@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <!-- Header -->
+
     <TextView
         android:id="@+id/tvTransactionTitle"
         android:layout_width="match_parent"
@@ -164,13 +165,23 @@
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddIncome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:backgroundTint="#37FF30"
+        app:fabSize="normal"
+        app:srcCompat="@android:drawable/ic_input_add" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddExpense"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        app:srcCompat="@android:drawable/ic_input_add"
         android:backgroundTint="#FF3B30"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        app:srcCompat="@android:drawable/ic_input_add" />
 
 </LinearLayout>

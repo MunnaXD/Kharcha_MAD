@@ -18,13 +18,14 @@ public class TransactionActivity extends AppCompatActivity {
     private TextView tvSelectedMonth, tvIncome, tvExpenses, tvTotal;
     private ImageView btnPrevMonth, btnNextMonth;
     private RecyclerView rvTransactions;
-    private FloatingActionButton fabAddExpense;
-    private Calendar currentMonth;
+    private FloatingActionButton fabAddExpense,fabAddIncome;
     private ArrayList<Transaction> transactionList;
     private TransactionAdapter adapter;
+    private Calendar currentMonth;
 
-    // Constants for Intent
-    public static final int ADD_TRANSACTION_REQUEST = 1;
+    // Request codes for activities
+    private static final int ADD_EXPENSE_REQUEST = 1;
+    private static final int ADD_INCOME_REQUEST = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,15 @@ public class TransactionActivity extends AppCompatActivity {
         setContentView(R.layout.transaction_screen);
 
         // Initialize views
-        initializeViews();
+        tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
+        tvIncome = findViewById(R.id.tvIncome);
+        tvExpenses = findViewById(R.id.tvExpenses);
+        tvTotal = findViewById(R.id.tvTotal);
+        btnPrevMonth = findViewById(R.id.btnPrevMonth);
+        btnNextMonth = findViewById(R.id.btnNextMonth);
+        rvTransactions = findViewById(R.id.rvTransactions);
+        fabAddExpense = findViewById(R.id.fabAddExpense);
+        fabAddIncome = findViewById(R.id.fabAddIncome);
 
         // Initialize data
         currentMonth = Calendar.getInstance();
@@ -46,37 +55,40 @@ public class TransactionActivity extends AppCompatActivity {
         // Update month display
         updateMonthDisplay();
 
-        // Setup click listeners
-        setupClickListeners();
-    }
-
-    private void initializeViews() {
-        tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
-        tvIncome = findViewById(R.id.tvIncome);
-        tvExpenses = findViewById(R.id.tvExpenses);
-        tvTotal = findViewById(R.id.tvTotal);
-        btnPrevMonth = findViewById(R.id.btnPrevMonth);
-        btnNextMonth = findViewById(R.id.btnNextMonth);
-        rvTransactions = findViewById(R.id.rvTransactions);
-        fabAddExpense = findViewById(R.id.fabAddExpense);
-    }
-
-    private void setupClickListeners() {
-        fabAddExpense.setOnClickListener(v -> {
-            Intent intent = new Intent(TransactionActivity.this, ExpenseActivity.class);
-            startActivityForResult(intent, ADD_TRANSACTION_REQUEST);
+        // Setup click listeners for expense and income buttons
+        fabAddExpense.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TransactionActivity.this, ExpenseActivity.class);
+                startActivityForResult(intent, ADD_EXPENSE_REQUEST);
+            }
         });
 
-        btnPrevMonth.setOnClickListener(v -> {
-            currentMonth.add(Calendar.MONTH, -1);
-            updateMonthDisplay();
-            filterTransactionsByMonth();
+        fabAddIncome.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TransactionActivity.this, IncomeActivity.class);
+                startActivityForResult(intent, ADD_INCOME_REQUEST);
+            }
         });
 
-        btnNextMonth.setOnClickListener(v -> {
-            currentMonth.add(Calendar.MONTH, 1);
-            updateMonthDisplay();
-            filterTransactionsByMonth();
+        // Setup month navigation
+        btnPrevMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentMonth.add(Calendar.MONTH, -1);
+                updateMonthDisplay();
+                filterTransactionsByMonth();
+            }
+        });
+
+        btnNextMonth.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                currentMonth.add(Calendar.MONTH, 1);
+                updateMonthDisplay();
+                filterTransactionsByMonth();
+            }
         });
     }
 
@@ -125,11 +137,11 @@ public class TransactionActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == ADD_TRANSACTION_REQUEST && resultCode == RESULT_OK && data != null) {
+        if (resultCode == RESULT_OK && data != null) {
             Transaction newTransaction = (Transaction) data.getSerializableExtra("transaction");
             if (newTransaction != null) {
                 transactionList.add(newTransaction);
-                filterTransactionsByMonth(); // This will update the RecyclerView and totals
+                filterTransactionsByMonth();
             }
         }
     }

@@ -18,10 +18,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class ExpenseActivity extends AppCompatActivity {
+public class IncomeActivity extends AppCompatActivity {
     private EditText etDate, etAmount, etNote;
     private Spinner spinnerCategory;
-    private Button btnAddExpense;
+    private Button btnAddIncome;
     private ImageButton btnBack;
     private Calendar calendar;
     private SimpleDateFormat dateFormatter;
@@ -29,28 +29,29 @@ public class ExpenseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_expense);
+        setContentView(R.layout.activity_income);
 
+        // Initialize views
         etDate = findViewById(R.id.etDate);
         etAmount = findViewById(R.id.etAmount);
         etNote = findViewById(R.id.etNote);
         spinnerCategory = findViewById(R.id.spinnerCategory);
-        btnAddExpense = findViewById(R.id.btnAddIncome);
+        btnAddIncome = findViewById(R.id.btnAddIncome);
         btnBack = findViewById(R.id.btnBack);
 
+        // Setup date
         dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         calendar = Calendar.getInstance();
         etDate.setText(dateFormatter.format(calendar.getTime()));
 
-        // Set category spinner from strings.xml
+        // Setup category spinner
         ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
                 this,
-                R.array.expense_categories,  // Make sure your categories are defined in strings.xml
+                R.array.income_categories,
                 android.R.layout.simple_spinner_item
         );
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategory.setAdapter(categoryAdapter);
 
+        // Setup date picker
         etDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,30 +59,33 @@ public class ExpenseActivity extends AppCompatActivity {
                 int month = calendar.get(Calendar.MONTH);
                 int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-                DatePickerDialog datePickerDialog = new DatePickerDialog(ExpenseActivity.this, new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        calendar.set(Calendar.YEAR, year);
-                        calendar.set(Calendar.MONTH, month);
-                        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        etDate.setText(dateFormatter.format(calendar.getTime()));
-                    }
-                }, year, month, day);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        IncomeActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                calendar.set(Calendar.YEAR, year);
+                                calendar.set(Calendar.MONTH, month);
+                                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                                etDate.setText(dateFormatter.format(calendar.getTime()));
+                            }
+                        },
+                        year, month, day
+                );
                 datePickerDialog.show();
             }
         });
 
+        // Setup back button
         btnBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ExpenseActivity.this, TransactionActivity.class);
-                startActivity(intent);
-                finish();  // Ensures the back stack doesn't keep the ExpenseActivity
+                finish(); // Just finish the activity, don't start a new one
             }
         });
 
-
-        btnAddExpense.setOnClickListener(new View.OnClickListener() {
+        // Setup add income button
+        btnAddIncome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String amountText = etAmount.getText().toString().trim();
@@ -91,7 +95,7 @@ public class ExpenseActivity extends AppCompatActivity {
 
                 if (amountText.isEmpty()) {
                     etAmount.setError("Please enter amount");
-                    Toast.makeText(ExpenseActivity.this, "Please enter amount", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IncomeActivity.this, "Please enter amount", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -99,18 +103,18 @@ public class ExpenseActivity extends AppCompatActivity {
                     double amount = Double.parseDouble(amountText);
                     String title = noteText.isEmpty() ? categoryText : noteText;
 
-                    Transaction transaction = new Transaction(title, amount, "Expense", selectedDate);
+                    Transaction transaction = new Transaction(title, amount, "Income", selectedDate);
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("transaction", transaction);
                     setResult(RESULT_OK, resultIntent);
 
-                    Toast.makeText(ExpenseActivity.this, "Expense added successfully!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IncomeActivity.this, "Income added successfully!", Toast.LENGTH_SHORT).show();
                     finish();
 
                 } catch (NumberFormatException e) {
                     etAmount.setError("Please enter valid amount");
-                    Toast.makeText(ExpenseActivity.this, "Please enter valid amount", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(IncomeActivity.this, "Please enter valid amount", Toast.LENGTH_SHORT).show();
                 }
             }
         });

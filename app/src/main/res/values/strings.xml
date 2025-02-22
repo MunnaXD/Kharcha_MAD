@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Kharcha</string>
+    <string-array name="expense_categories">
+        <item>Food</item>
+        <item>Transport</item>
+        <item>Shopping</item>
+        <item>Entertainment</item>
+        <item>Utilities</item>
+        <item>Rent</item>
+        <item>Others</item>
+    </string-array>
+    <string-array name="income_categories">
+        <item>Allowance</item>
+        <item>Salary</item>
+        <item>Petty Cash</item>
+        <item>Bonus</item>
+        <item>Other</item>
+    </string-array>
 </resources>
