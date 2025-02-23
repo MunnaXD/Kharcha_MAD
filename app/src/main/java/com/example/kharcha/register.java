@@ -7,12 +7,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.AuthResult;
 
 public class register extends AppCompatActivity {
 
     private EditText etEmail, etPhone, etPassword, etConfirmPassword;
     private Button btnRegister;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +30,8 @@ public class register extends AppCompatActivity {
         etPassword = findViewById(R.id.password);
         etConfirmPassword = findViewById(R.id.confpassword);
         btnRegister = findViewById(R.id.registerButton);
+
+        mAuth = FirebaseAuth.getInstance();
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,32 +47,24 @@ public class register extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
         String confirmPassword = etConfirmPassword.getText().toString().trim();
 
-        if (TextUtils.isEmpty(email)) {
-            Toast.makeText(this, "Enter email", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(phone)) {
-            Toast.makeText(this, "Enter phone number", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(password)) {
-            Toast.makeText(this, "Enter password", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(confirmPassword)) {
-            Toast.makeText(this, "Confirm your password", Toast.LENGTH_SHORT).show();
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(phone) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmPassword)) {
+            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
             return;
         }
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(register.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Toast.makeText(register.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(register.this, login_screen.class);
-        startActivity(intent);
-        finish();
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(register.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(register.this, login_screen.class));
+                        finish();
+                    } else {
+                        Toast.makeText(register.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
-
