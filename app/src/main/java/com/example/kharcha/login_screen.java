@@ -13,15 +13,15 @@ import androidx.appcompat.app.AppCompatActivity;
 public class login_screen extends AppCompatActivity {
     EditText emailid,password;
     Button loginButton;
-    TextView forgotPassword;
+    TextView CreateAccount;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen);
         emailid=findViewById(R.id.email);
         password=findViewById(R.id.password);
+        CreateAccount=findViewById(R.id.createAcc);
         loginButton=findViewById(R.id.loginButton);
-        forgotPassword=findViewById(R.id.forgotPass);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,6 +42,13 @@ public class login_screen extends AppCompatActivity {
                 startActivity(intent);
                 finish(); // This will close the login activity
                 Toast.makeText(login_screen.this,"Login Successful!",Toast.LENGTH_SHORT).show();
+            }
+        });
+        CreateAccount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(login_screen.this,register.class);
+                startActivity(intent);
             }
         });
 

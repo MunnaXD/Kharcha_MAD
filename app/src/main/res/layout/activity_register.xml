@@ -24,23 +24,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/nunito_bold"
-            android:text="Welcome"
-            android:textColor="#FFA500"
-            android:textSize="34sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/nunito_bold"
-            android:text="Sign in to your account"
+            android:text="Create your account"
             android:textColor="@color/white"
             android:textSize="20sp" />
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="Email"
+            android:text="Enter Email"
             android:textColor="#FFA500"
             android:textSize="16sp" />
 
@@ -59,10 +51,33 @@
             android:textColorHint="#808080" />
 
         <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="Enter Phone no."
+            android:textColor="#FFA500"
+            android:textSize="16sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp" />
+
+        <EditText
+            android:id="@+id/phoneno"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_input"
+            android:hint="XXXXXX"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textColorHint="#808080" />
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="Password"
+            android:text="Enter Password"
             android:textColor="#FFA500"
             android:textSize="16sp" />
 
@@ -81,26 +96,40 @@
             android:textColor="@color/black"
             android:textColorHint="#808080" />
 
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Confirm Password"
+            android:textColor="#FFA500"
+            android:textSize="16sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="5dp" />
+
+        <EditText
+            android:id="@+id/confpassword"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/rounded_input"
+            android:hint="******"
+            android:inputType="textPassword"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textColorHint="#808080" />
+
         <Button
-            android:id="@+id/loginButton"
+            android:id="@+id/registerButton"
             android:layout_width="303dp"
             android:layout_height="50dp"
             android:layout_marginTop="15dp"
             android:background="@drawable/rounded_button"
             android:fontFamily="@font/nunito_bold"
-            android:text="Login"
+            android:text="Register"
             android:textColor="@color/white"
             android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/createAcc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Create Account"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
 
 
     </LinearLayout>
