@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "733405700111",
+    "project_id": "kharcha-6020d",
+    "storage_bucket": "kharcha-6020d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:733405700111:android:42ba1391024895a49ec37a",
+        "android_client_info": {
+          "package_name": "com.example.kharcha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBc1gmYiF1FDuzoQVHjRCdnJTtMdBlr7Xo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
