@@ -3,11 +3,14 @@ package com.example.kharcha;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,10 +21,11 @@ public class TransactionActivity extends AppCompatActivity {
     private TextView tvSelectedMonth, tvIncome, tvExpenses, tvTotal;
     private ImageView btnPrevMonth, btnNextMonth;
     private RecyclerView rvTransactions;
-    private FloatingActionButton fabAddExpense,fabAddIncome;
+    private FloatingActionButton fabAddExpense, fabAddIncome;
     private ArrayList<Transaction> transactionList;
     private TransactionAdapter adapter;
     private Calendar currentMonth;
+    private BottomNavigationView bottomNavigationView; // Added BottomNavigationView
 
     // Request codes for activities
     private static final int ADD_EXPENSE_REQUEST = 1;
@@ -42,6 +46,36 @@ public class TransactionActivity extends AppCompatActivity {
         rvTransactions = findViewById(R.id.rvTransactions);
         fabAddExpense = findViewById(R.id.fabAddExpense);
         fabAddIncome = findViewById(R.id.fabAddIncome);
+        bottomNavigationView = findViewById(R.id.bottom_navigation); // Initialize BottomNavigationView
+
+        bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        // Set listener for navigation item clicks
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+
+                if (id == R.id.nav_transaction) {
+                    // Stay on the same page (TransactionActivity)
+                    return true;
+                } else if (id == R.id.nav_analytics) {
+                    startActivity(new Intent(TransactionActivity.this, AnalyticsActivity.class));
+                    overridePendingTransition(0, 0); // Disable transition animation
+                    return true;
+                } else if (id == R.id.nav_settings) {
+                    startActivity(new Intent(TransactionActivity.this, SettingsActivity.class));
+                    overridePendingTransition(0, 0);
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        // Set the default selected item
+        bottomNavigationView.setSelectedItemId(R.id.nav_transaction);
+
 
         // Initialize data
         currentMonth = Calendar.getInstance();
