@@ -129,7 +129,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btnAddIncome"
+        android:id="@+id/btnAddExpense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

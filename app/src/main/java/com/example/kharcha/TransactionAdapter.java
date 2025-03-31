@@ -1,38 +1,46 @@
 package com.example.kharcha;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
-    private ArrayList<Transaction> transactions;
+    private List<TransactionModel> transactions;
+    private Context context;
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-    public TransactionAdapter(ArrayList<Transaction> transactions) {
+    public TransactionAdapter(Context context, List<TransactionModel> transactions) {
+        this.context = context;
         this.transactions = transactions;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_transaction, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_transaction, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Transaction transaction = transactions.get(position);
+        TransactionModel transaction = transactions.get(position);
         holder.tvTitle.setText(transaction.getTitle());
         holder.tvAmount.setText(String.format("₹%.2f", transaction.getAmount()));
-        holder.tvDate.setText(sdf.format(transaction.getDate()));
 
-        // Set color based on transaction type
-        if (transaction.getType().equals("Income")) {
+        // ✅ Ensure Date Formatting Works
+        if (transaction.getDate() != null) {
+            holder.tvDate.setText(sdf.format(transaction.getDate()));
+        } else {
+            holder.tvDate.setText("Unknown Date"); // Fallback if date is null
+        }
+
+        // Set text color based on transaction type
+        if ("Income".equals(transaction.getType())) {
             holder.tvAmount.setTextColor(0xFF4CAF50); // Green
         } else {
             holder.tvAmount.setTextColor(0xFFF44336); // Red
@@ -44,7 +52,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         return transactions.size();
     }
 
-    public void updateData(ArrayList<Transaction> newTransactions) {
+    public void updateData(List<TransactionModel> newTransactions) {
         this.transactions = newTransactions;
         notifyDataSetChanged();
     }

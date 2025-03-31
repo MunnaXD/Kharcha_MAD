@@ -1,7 +1,6 @@
 package com.example.kharcha;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -12,11 +11,12 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class IncomeActivity extends AppCompatActivity {
     private EditText etDate, etAmount, etNote;
@@ -25,11 +25,15 @@ public class IncomeActivity extends AppCompatActivity {
     private ImageButton btnBack;
     private Calendar calendar;
     private SimpleDateFormat dateFormatter;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_income);
+
+        // Initialize Firestore
+        db = FirebaseFirestore.getInstance();
 
         // Initialize views
         etDate = findViewById(R.id.etDate);
@@ -39,7 +43,7 @@ public class IncomeActivity extends AppCompatActivity {
         btnAddIncome = findViewById(R.id.btnAddIncome);
         btnBack = findViewById(R.id.btnBack);
 
-        // Setup date
+        // Setup date formatter
         dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         calendar = Calendar.getInstance();
         etDate.setText(dateFormatter.format(calendar.getTime()));
@@ -47,82 +51,69 @@ public class IncomeActivity extends AppCompatActivity {
         // Setup category spinner
         ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
                 this,
-                R.array.income_categories, // Your string array
-                R.layout.spinner_item // Custom layout with black text
+                R.array.income_categories,
+                R.layout.spinner_item
         );
-
-        // Set dropdown layout
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Apply adapter to Spinner
         spinnerCategory.setAdapter(categoryAdapter);
 
-        // Setup date picker
-        etDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH);
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog datePickerDialog = new DatePickerDialog(
-                        IncomeActivity.this,
-                        new DatePickerDialog.OnDateSetListener() {
-                            @Override
-                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                                calendar.set(Calendar.YEAR, year);
-                                calendar.set(Calendar.MONTH, month);
-                                calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                                etDate.setText(dateFormatter.format(calendar.getTime()));
-                            }
-                        },
-                        year, month, day
-                );
-                datePickerDialog.show();
-            }
+        // Date Picker Setup
+        etDate.setOnClickListener(v -> {
+            new DatePickerDialog(
+                    IncomeActivity.this,
+                    (view, year, month, day) -> {
+                        calendar.set(year, month, day);
+                        etDate.setText(dateFormatter.format(calendar.getTime()));
+                    },
+                    calendar.get(Calendar.YEAR),
+                    calendar.get(Calendar.MONTH),
+                    calendar.get(Calendar.DAY_OF_MONTH)
+            ).show();
         });
 
-        // Setup back button
-        btnBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Just finish the activity, don't start a new one
-            }
-        });
+        // Back Button
+        btnBack.setOnClickListener(v -> finish());
 
-        // Setup add income button
-        btnAddIncome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String amountText = etAmount.getText().toString().trim();
-                String noteText = etNote.getText().toString().trim();
-                String categoryText = spinnerCategory.getSelectedItem().toString();
-                Date selectedDate = calendar.getTime();
+        // Add Income Button with Firestore Integration
+        btnAddIncome.setOnClickListener(v -> addIncome());
+    }
 
-                if (amountText.isEmpty()) {
-                    etAmount.setError("Please enter amount");
-                    Toast.makeText(IncomeActivity.this, "Please enter amount", Toast.LENGTH_SHORT).show();
-                    return;
-                }
+    private void addIncome() {
+        String amountText = etAmount.getText().toString().trim();
+        String noteText = etNote.getText().toString().trim();
+        String categoryText = spinnerCategory.getSelectedItem().toString();
+        String selectedDate = etDate.getText().toString();
 
-                try {
-                    double amount = Double.parseDouble(amountText);
-                    String title = noteText.isEmpty() ? categoryText : noteText;
+        if (amountText.isEmpty()) {
+            etAmount.setError("Please enter amount");
+            Toast.makeText(this, "Please enter amount", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-                    Transaction transaction = new Transaction(title, amount, "Income", selectedDate);
+        try {
+            double amount = Double.parseDouble(amountText);
+            String title = noteText.isEmpty() ? categoryText : noteText;
 
-                    Intent resultIntent = new Intent();
-                    resultIntent.putExtra("transaction", transaction);
-                    setResult(RESULT_OK, resultIntent);
+            // Save to Firestore
+            Map<String, Object> transaction = new HashMap<>();
+            transaction.put("title", title);
+            transaction.put("amount", amount);
+            transaction.put("type", "Income");
+            transaction.put("date", selectedDate);
 
-                    Toast.makeText(IncomeActivity.this, "Income added successfully!", Toast.LENGTH_SHORT).show();
-                    finish();
+            db.collection("transactions")
+                    .add(transaction)
+                    .addOnSuccessListener(docRef -> {
+                        Toast.makeText(this, "Income added successfully!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e ->
+                            Toast.makeText(this, "Failed to add income", Toast.LENGTH_SHORT).show()
+                    );
 
-                } catch (NumberFormatException e) {
-                    etAmount.setError("Please enter valid amount");
-                    Toast.makeText(IncomeActivity.this, "Please enter valid amount", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        } catch (NumberFormatException e) {
+            etAmount.setError("Please enter a valid amount");
+            Toast.makeText(this, "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+        }
     }
 }

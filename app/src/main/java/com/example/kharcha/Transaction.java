@@ -1,4 +1,6 @@
 package com.example.kharcha;
+
+import com.google.firebase.firestore.ServerTimestamp;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -6,7 +8,12 @@ public class Transaction implements Serializable {
     private String title;
     private double amount;
     private String type; // "Income" or "Expense"
+
+    @ServerTimestamp
     private Date date;
+
+    // Empty constructor required for Firestore
+    public Transaction() {}
 
     public Transaction(String title, double amount, String type, Date date) {
         this.title = title;
