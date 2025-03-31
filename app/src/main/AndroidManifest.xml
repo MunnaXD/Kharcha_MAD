@@ -12,8 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kharcha"
         tools:targetApi="31">
-        <activity android:name=".register" android:exported="false">
+        <activity android:name=".SettingsActivity" android:exported="false">
 
+        </activity>
+        <activity android:name=".register" android:exported="false">
         </activity>
         <activity android:name=".TransactionActivity"
             android:exported="true">
