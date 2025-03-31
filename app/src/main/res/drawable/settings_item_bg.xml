@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Background Color -->
+    <solid android:color="#404040"/>  <!-- Dark Gray -->
+
+    <!-- Rounded Corners -->
+    <corners android:radius="12dp"/>
+
+    <!-- Ripple Effect on Click -->
+    <item>
+        <ripple android:color="#55FFFFFF"/>
+    </item>
+
+    <!-- Optional Border -->
+    <stroke android:width="1dp" android:color="#606060"/>
+</shape>
