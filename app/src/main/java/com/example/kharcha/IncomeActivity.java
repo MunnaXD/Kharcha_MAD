@@ -47,9 +47,15 @@ public class IncomeActivity extends AppCompatActivity {
         // Setup category spinner
         ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
                 this,
-                R.array.income_categories,
-                android.R.layout.simple_spinner_item
+                R.array.income_categories, // Your string array
+                R.layout.spinner_item // Custom layout with black text
         );
+
+        // Set dropdown layout
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply adapter to Spinner
+        spinnerCategory.setAdapter(categoryAdapter);
 
         // Setup date picker
         etDate.setOnClickListener(new View.OnClickListener() {

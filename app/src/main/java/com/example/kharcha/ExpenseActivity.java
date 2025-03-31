@@ -42,14 +42,17 @@ public class ExpenseActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
         etDate.setText(dateFormatter.format(calendar.getTime()));
 
-        // Set category spinner from strings.xml
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 this,
-                R.array.expense_categories,  // Make sure your categories are defined in strings.xml
-                android.R.layout.simple_spinner_item
+                R.array.expense_categories, // Your string array
+                R.layout.spinner_item // Custom layout with black text
         );
-        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategory.setAdapter(categoryAdapter);
+
+        // Set dropdown layout
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply adapter to Spinner
+        spinnerCategory.setAdapter(adapter);
 
         etDate.setOnClickListener(new View.OnClickListener() {
             @Override
