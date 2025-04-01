@@ -39,7 +39,7 @@ public class TransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.transaction_screen);
 
-
+        // Initialize UI components
         rvTransactions = findViewById(R.id.rvTransactions);
         tvIncome = findViewById(R.id.tvIncome);
         tvExpenses = findViewById(R.id.tvExpenses);
@@ -51,24 +51,24 @@ public class TransactionActivity extends AppCompatActivity {
         fabAddIncome = findViewById(R.id.fabAddIncome);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
 
-
+        // Set up RecyclerView
         transactionList = new ArrayList<>();
         adapter = new TransactionAdapter(this, transactionList);
         rvTransactions.setLayoutManager(new LinearLayoutManager(this));
         rvTransactions.setAdapter(adapter);
 
-
+        // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
-
+        // Set up the current month
         currentMonth = Calendar.getInstance();
         updateMonthDisplay();
 
-
+        // Load initial transactions
         loadTransactions();
 
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+        // Set up navigation
+        bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_transaction) {
                 return true;
             } else if (item.getItemId() == R.id.nav_analytics) {
@@ -84,13 +84,12 @@ public class TransactionActivity extends AppCompatActivity {
         });
         bottomNavigationView.setSelectedItemId(R.id.nav_transaction);
 
-
+        // Set up FAB click listeners
         fabAddExpense.setOnClickListener(v -> startActivity(new Intent(TransactionActivity.this, ExpenseActivity.class)));
-
 
         fabAddIncome.setOnClickListener(v -> startActivity(new Intent(TransactionActivity.this, IncomeActivity.class)));
 
-
+        // Set up month navigation buttons
         btnPrevMonth.setOnClickListener(v -> {
             currentMonth.add(Calendar.MONTH, -1);
             updateMonthDisplay();
@@ -107,6 +106,11 @@ public class TransactionActivity extends AppCompatActivity {
     private void loadTransactions() {
         Log.d(TAG, "Loading transactions from Firestore");
 
+        // Get the selected year and month
+        int selectedYear = currentMonth.get(Calendar.YEAR);
+        int selectedMonth = currentMonth.get(Calendar.MONTH);
+
+        Log.d(TAG, "Filtering for year: " + selectedYear + ", month: " + selectedMonth);
 
         db.collection("transactions")
                 .get()
@@ -120,50 +124,57 @@ public class TransactionActivity extends AppCompatActivity {
                     if (queryDocumentSnapshots.isEmpty()) {
                         Toast.makeText(TransactionActivity.this, "No transactions found", Toast.LENGTH_SHORT).show();
                         updateSummary(0, 0);
+                        transactionList.clear();
+                        adapter.notifyDataSetChanged();
                         return;
                     }
 
                     for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                         try {
-
                             Map<String, Object> data = document.getData();
                             Log.d(TAG, "Document data: " + data.toString());
-
 
                             String title = getString(data, "title");
                             Double amount = getDouble(data, "amount");
                             String type = getString(data, "type");
                             Date date = getDate(data, "date");
 
-                            if (title == null || amount == null || type == null) {
+                            if (title == null || amount == null || type == null || date == null) {
                                 Log.w(TAG, "Skipping document " + document.getId() + " due to missing required fields");
                                 continue;
                             }
 
+                            // Extract transaction's year and month
+                            Calendar transactionCalendar = Calendar.getInstance();
+                            transactionCalendar.setTime(date);
+                            int transactionYear = transactionCalendar.get(Calendar.YEAR);
+                            int transactionMonth = transactionCalendar.get(Calendar.MONTH);
 
-                            TransactionModel model = new TransactionModel(title, amount, type, date != null ? date : new Date());
+                            // Debug log for dates
+                            Log.d(TAG, "Transaction date: " + date + ", Year: " + transactionYear + ", Month: " + transactionMonth);
 
+                            // Filter transactions by selected month and year
+                            if (transactionYear == selectedYear && transactionMonth == selectedMonth) {
+                                TransactionModel model = new TransactionModel(title, amount, type, date);
+                                tempList.add(model);
 
-                            tempList.add(model);
-
-
-                            if ("Income".equals(type)) {
-                                totalIncome += amount;
-                            } else if ("Expense".equals(type)) {
-                                totalExpense += amount;
+                                if ("Income".equals(type)) {
+                                    totalIncome += amount;
+                                } else if ("Expense".equals(type)) {
+                                    totalExpense += amount;
+                                }
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Error processing document: " + document.getId(), e);
                         }
                     }
 
-                    Log.d(TAG, "Processed " + tempList.size() + " transactions");
-
+                    Log.d(TAG, "Filtered " + tempList.size() + " transactions for " +
+                            new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(currentMonth.getTime()));
 
                     final List<TransactionModel> finalList = tempList;
                     final double finalTotalIncome = totalIncome;
                     final double finalTotalExpense = totalExpense;
-
 
                     runOnUiThread(() -> {
                         transactionList.clear();
@@ -173,9 +184,10 @@ public class TransactionActivity extends AppCompatActivity {
 
                         // Show feedback to user
                         if (finalList.isEmpty()) {
-                            Toast.makeText(TransactionActivity.this, "No valid transactions found", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(TransactionActivity.this, "Loaded " + finalList.size() + " transactions", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(TransactionActivity.this,
+                                    "No transactions found for " +
+                                            new SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(currentMonth.getTime()),
+                                    Toast.LENGTH_SHORT).show();
                         }
                     });
                 })
@@ -186,7 +198,6 @@ public class TransactionActivity extends AppCompatActivity {
                             Toast.LENGTH_SHORT).show();
                 });
     }
-
 
     private String getString(Map<String, Object> data, String key) {
         Object value = data.get(key);
@@ -201,19 +212,21 @@ public class TransactionActivity extends AppCompatActivity {
             return ((Long) value).doubleValue();
         } else if (value instanceof Integer) {
             return ((Integer) value).doubleValue();
-        } else if (value instanceof String) {
-            try {
-                return Double.parseDouble((String) value);
-            } catch (NumberFormatException e) {
-                return null;
-            }
         }
         return null;
     }
 
     private Date getDate(Map<String, Object> data, String key) {
         Object value = data.get(key);
-        return value instanceof Date ? (Date) value : null;
+        if (value instanceof com.google.firebase.Timestamp) {
+            return ((com.google.firebase.Timestamp) value).toDate();
+        } else if (value instanceof Date) {
+            return (Date) value;
+        } else if (value instanceof Long) {
+            // Handle timestamp stored as milliseconds since epoch
+            return new Date((Long) value);
+        }
+        return null;
     }
 
     private void updateMonthDisplay() {
