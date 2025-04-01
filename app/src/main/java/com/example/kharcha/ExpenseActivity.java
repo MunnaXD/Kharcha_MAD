@@ -1,6 +1,7 @@
 package com.example.kharcha;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -119,6 +120,9 @@ public class ExpenseActivity extends AppCompatActivity {
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "Failed to add expense", Toast.LENGTH_SHORT).show()
                     );
+
+            Intent intent=new Intent(ExpenseActivity.this,TransactionActivity.class);
+            startActivity(intent);
 
         } catch (NumberFormatException e) {
             etAmount.setError("Please enter a valid amount");
