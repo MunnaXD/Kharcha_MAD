@@ -1,6 +1,9 @@
 package com.example.kharcha;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +14,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+
+import androidx.core.app.NotificationManagerCompat;
 import com.google.firebase.auth.FirebaseUser;
 
 public class login_screen extends AppCompatActivity {
@@ -28,6 +33,8 @@ public class login_screen extends AppCompatActivity {
         password = findViewById(R.id.password);
         CreateAccount = findViewById(R.id.createAcc);
         loginButton = findViewById(R.id.loginButton);
+
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -66,5 +73,8 @@ public class login_screen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
     }
+
 }

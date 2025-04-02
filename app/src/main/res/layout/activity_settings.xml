@@ -19,218 +19,251 @@
         android:layout_marginTop="16dp"/>
 
     <!-- Profile Image -->
-
-    <!-- Settings List -->
     <ImageView
         android:id="@+id/imgProfile"
         android:layout_width="187dp"
         android:layout_height="167dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="16dp"
-
         android:scaleType="centerCrop"
         android:src="@drawable/ic_profile_placeholder" />
 
-    <LinearLayout
+    <!-- Settings List - Wrapped in ScrollView to handle potential overflow -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:orientation="vertical">
-
-        <!-- Edit Profile -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/settings_item_bg"
-            android:padding="12dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Edit Profile"
-                android:textSize="16sp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_media_next"
-                app:tint="@android:color/white" />
-        </LinearLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
-
-        <!-- Your Account -->
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_weight="1" />
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/settings_item_bg"
-            android:padding="12dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true">
+            android:layout_marginTop="24dp"
+            android:orientation="vertical">
 
-            <TextView
-                android:layout_width="0dp"
+            <!-- Edit Profile -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Your Account"
-                android:textSize="16sp"
-                android:textColor="@android:color/white" />
+                android:background="@drawable/settings_item_bg"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_media_next"
-                app:tint="@android:color/white" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Edit Profile"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
+
+            <!-- Your Account -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_item_bg"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Your Account"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
+
+            <!-- Language -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_item_bg"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Language"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
+
+            <!-- Theme -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_item_bg"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Theme"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
+
+            <!-- Privacy Policy -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_item_bg"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Privacy Policy"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
+
+            <!-- FAQ -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_item_bg"
+                android:padding="12dp"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="FAQ's"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
+
+            <!-- Set Budget -->
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_item_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Set Budget"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@android:drawable/ic_media_next"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
+
+            <!-- Logout Button -->
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:textColor="@android:color/white"
+                android:layout_margin="16dp"/>
 
         </LinearLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
-
-        <!-- Language -->
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="5dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/settings_item_bg"
-            android:padding="12dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Language"
-                android:textSize="16sp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_media_next"
-                app:tint="@android:color/white" />
-        </LinearLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
-
-        <!-- Theme -->
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_weight="1" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/settings_item_bg"
-            android:padding="12dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Theme"
-                android:textSize="16sp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_media_next"
-                app:tint="@android:color/white" />
-        </LinearLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
-
-        <!-- Privacy Policy -->
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="5dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/settings_item_bg"
-            android:padding="12dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Privacy Policy"
-                android:textSize="16sp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_media_next"
-                app:tint="@android:color/white" />
-        </LinearLayout>
-
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#555555"/>
-
-        <!-- FAQ -->
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="5dp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/settings_item_bg"
-            android:padding="12dp"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="FAQ's"
-                android:textSize="16sp"
-                android:textColor="@android:color/white" />
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/ic_media_next"
-                app:tint="@android:color/white" />
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- Logout Button -->
-    <Button
-        android:id="@+id/btnLogout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Logout"
-        android:textColor="@android:color/white"
-        android:layout_margin="16dp"/>
+    </ScrollView>
 
     <!-- Bottom Navigation -->
     <LinearLayout
@@ -247,7 +280,6 @@
             app:itemTextColor="@color/nav_icon_selector"
             app:labelVisibilityMode="labeled"
             app:menu="@menu/bottom_nav_menu" />
-
     </LinearLayout>
 
 </LinearLayout>

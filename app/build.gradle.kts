@@ -52,6 +52,7 @@ dependencies {
     // Material Components (Remove redundant implementation)
     implementation("com.google.android.material:material:1.9.0")
 
+
     // Testing Dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
