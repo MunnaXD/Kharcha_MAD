@@ -62,6 +62,8 @@ public class TransactionActivity extends AppCompatActivity {
         fabAddIncome = findViewById(R.id.fabAddIncome);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         createNotificationChannel();
+
+        BudgetNotificationHelper.createNotificationChannel(this);
         checkNotificationPermission();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                 ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS)
@@ -180,7 +182,7 @@ public class TransactionActivity extends AppCompatActivity {
                 scheduleDailyNotification();
             } else {
                 // Permission denied, inform user
-                Toast.makeText(this, "Notification permission is required for daily reminders",
+                Toast.makeText(this, "Notification permission is required for daily remindersa and budget alerts",
                         Toast.LENGTH_LONG).show();
             }
         }
