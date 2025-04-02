@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,23 +30,23 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class AnalyticsActivity extends AppCompatActivity {
-    private static final String TAG = "AnalyticsActivity";
+public class IncomeAnalyticsActivity extends AppCompatActivity {
+    private static final String TAG = "IncomeAnalyticsActivity";
     private FirebaseFirestore db;
     private Calendar currentMonth;
     private TextView tvSelectedMonth, tvIncomeAmount, tvExpenseAmount, tvBalanceAmount;
     private ImageView btnPrevMonth, btnNextMonth;
     private LinearLayout weeklyTrendContainer;
-    private RecyclerView rvExpenseCategories;
-    private CategoryAdapter categoryAdapter;
-    private List<CategoryModel> categories;
+    private RecyclerView rvIncomeCategories;
+    private IncomeCategoryAdapter incomeCategoryAdapter;
+    private List<IncomeCategoryModel> incomeCategories;
     private BottomNavigationView bottomNavigationView;
-    private LinearLayout incomeview;
+    private LinearLayout expenseview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.analytics_screen);
+        setContentView(R.layout.analytics_screen_income);
 
         // Initialize UI components
         tvSelectedMonth = findViewById(R.id.tvSelectedMonth);
@@ -57,17 +56,19 @@ public class AnalyticsActivity extends AppCompatActivity {
         btnPrevMonth = findViewById(R.id.btnPrevMonth);
         btnNextMonth = findViewById(R.id.btnNextMonth);
         weeklyTrendContainer = findViewById(R.id.weeklyTrendContainer);
-        rvExpenseCategories = findViewById(R.id.rvIncomeCategories);
+        rvIncomeCategories = findViewById(R.id.rvIncomeCategories);
         bottomNavigationView = findViewById(R.id.bottom_navigation);
-        incomeview = findViewById(R.id.incomell);
+        expenseview = findViewById(R.id.expensell);
 
-        incomeview.setOnClickListener(new View.OnClickListener() {
+        expenseview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AnalyticsActivity.this, IncomeAnalyticsActivity.class);
+                Intent intent = new Intent(IncomeAnalyticsActivity.this, AnalyticsActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
+
         // Initialize Firestore
         db = FirebaseFirestore.getInstance();
 
@@ -76,10 +77,10 @@ public class AnalyticsActivity extends AppCompatActivity {
         updateMonthDisplay();
 
         // Set up RecyclerView
-        categories = new ArrayList<>();
-        categoryAdapter = new CategoryAdapter(this, categories);
-        rvExpenseCategories.setLayoutManager(new LinearLayoutManager(this));
-        rvExpenseCategories.setAdapter(categoryAdapter);
+        incomeCategories = new ArrayList<>();
+        incomeCategoryAdapter = new IncomeCategoryAdapter(this, incomeCategories);
+        rvIncomeCategories.setLayoutManager(new LinearLayoutManager(this));
+        rvIncomeCategories.setAdapter(incomeCategoryAdapter);
 
         // Load initial data
         loadAnalyticsData();
@@ -87,13 +88,13 @@ public class AnalyticsActivity extends AppCompatActivity {
         // Set up navigation
         bottomNavigationView.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_transaction) {
-                startActivity(new Intent(AnalyticsActivity.this, TransactionActivity.class));
+                startActivity(new Intent(IncomeAnalyticsActivity.this, TransactionActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             } else if (item.getItemId() == R.id.nav_analytics) {
                 return true;
             } else if (item.getItemId() == R.id.nav_settings) {
-                startActivity(new Intent(AnalyticsActivity.this, SettingsActivity.class));
+                startActivity(new Intent(IncomeAnalyticsActivity.this, SettingsActivity.class));
                 overridePendingTransition(0, 0);
                 return true;
             }
@@ -121,21 +122,18 @@ public class AnalyticsActivity extends AppCompatActivity {
     }
 
     private void loadAnalyticsData() {
-        Log.d(TAG, "Loading analytics data from Firestore");
+        Log.d(TAG, "Loading income analytics data from Firestore");
 
-        // Get the selected year and month
         int selectedYear = currentMonth.get(Calendar.YEAR);
         int selectedMonth = currentMonth.get(Calendar.MONTH);
 
         db.collection("transactions")
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
-                    double totalIncome =0;
+                    double totalIncome = 0;
                     double totalExpense = 0;
-
-                    // Maps for weekly and category analysis
-                    Map<Integer, Double> weeklyExpenses = new HashMap<>();
-                    Map<String, Double> categoryExpenses = new HashMap<>();
+                    Map<Integer, Double> weeklyIncome = new HashMap<>();
+                    Map<String, Double> categoryIncome = new HashMap<>();
 
                     if (queryDocumentSnapshots.isEmpty()) {
                         updateSummary(0, 0);
@@ -151,80 +149,68 @@ public class AnalyticsActivity extends AppCompatActivity {
                             Double amount = getDouble(data, "amount");
                             String type = getString(data, "type");
                             Date date = getDate(data, "date");
-                            String category = getString(data, "category");
 
                             if (title == null || amount == null || type == null || date == null) {
                                 continue;
                             }
 
-                            // Extract transaction's date info
                             Calendar transactionCal = Calendar.getInstance();
                             transactionCal.setTime(date);
                             int transactionYear = transactionCal.get(Calendar.YEAR);
                             int transactionMonth = transactionCal.get(Calendar.MONTH);
                             int transactionWeek = transactionCal.get(Calendar.WEEK_OF_MONTH);
 
-                            // Filter by selected month and year
                             if (transactionYear == selectedYear && transactionMonth == selectedMonth) {
                                 if ("Income".equals(type)) {
                                     totalIncome += amount;
+
+                                    // Add to weekly income
+                                    weeklyIncome.put(transactionWeek,
+                                            weeklyIncome.getOrDefault(transactionWeek, 0.0) + amount);
+
+                                    // Add to category income
+                                    String incomeCategory = title != null ? title : "Other";
+                                    categoryIncome.put(incomeCategory,
+                                            categoryIncome.getOrDefault(incomeCategory, 0.0) + amount);
                                 } else if ("Expense".equals(type)) {
                                     totalExpense += amount;
-
-                                    // Add to weekly expenses
-                                    if (!weeklyExpenses.containsKey(transactionWeek)) {
-                                        weeklyExpenses.put(transactionWeek, amount);
-                                    } else {
-                                        weeklyExpenses.put(transactionWeek,
-                                                weeklyExpenses.get(transactionWeek) + amount);
-                                    }
-
-                                    // Add to category expenses
-                                    String expenseCategory = title != null ? title : "Other";
-                                    if (!categoryExpenses.containsKey(expenseCategory)) {
-                                        categoryExpenses.put(expenseCategory, amount);
-                                    } else {
-                                        categoryExpenses.put(expenseCategory,
-                                                categoryExpenses.get(expenseCategory) + amount);
-                                    }
                                 }
                             }
                         } catch (Exception e) {
-                            Log.e(TAG, "Error processing document: " + document.getId(), e);
+                            Log.e(TAG, "Error processing document", e);
                         }
                     }
+
                     final double finalTotalIncome = totalIncome;
                     final double finalTotalExpense = totalExpense;
-                    final Map<Integer, Double> finalWeeklyExpenses = new HashMap<>(weeklyExpenses);
-                    final Map<String, Double> finalCategoryExpenses = new HashMap<>(categoryExpenses);
 
                     runOnUiThread(() -> {
                         updateSummary(finalTotalIncome, finalTotalExpense);
-                        updateWeeklyChart(weeklyExpenses);
-                        updateCategoryBreakdown(categoryExpenses);
+                        updateWeeklyChart(weeklyIncome);
+                        updateCategoryBreakdown(categoryIncome);
                     });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error getting analytics data", e);
-                    Toast.makeText(AnalyticsActivity.this,
-                            "Error loading analytics: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error getting income analytics data", e);
+                    Toast.makeText(this, "Error loading analytics: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
     private void updateSummary(double income, double expense) {
         double balance = income - expense;
         tvIncomeAmount.setText("₹" + String.format("%.2f", income));
-        tvExpenseAmount.setText("₹" + String.format("%.2f", expense));
-        tvBalanceAmount.setText("₹" + String.format("%.2f", balance));
+        if (tvExpenseAmount != null) {
+            tvExpenseAmount.setText("₹" + String.format("%.2f", expense));
+        }
+        if (tvBalanceAmount != null) {
+            tvBalanceAmount.setText("₹" + String.format("%.2f", balance));
+        }
     }
 
-    private void updateWeeklyChart(Map<Integer, Double> weeklyExpenses) {
-        // Clear previous chart
+    private void updateWeeklyChart(Map<Integer, Double> weeklyIncome) {
         weeklyTrendContainer.removeAllViews();
 
-        if (weeklyExpenses.isEmpty()) {
-            // Show empty state
+        if (weeklyIncome.isEmpty()) {
             TextView emptyText = new TextView(this);
             emptyText.setText("No data available for this month");
             emptyText.setTextColor(Color.WHITE);
@@ -236,12 +222,10 @@ public class AnalyticsActivity extends AppCompatActivity {
             return;
         }
 
-        // Find maximum expense for scaling
-        double maxExpense = Collections.max(weeklyExpenses.values());
+        double maxIncome = Collections.max(weeklyIncome.values());
 
-        // Create bars for each week
         for (int week = 1; week <= 5; week++) {
-            double weekAmount = weeklyExpenses.getOrDefault(week, 0.0);
+            double weekAmount = weeklyIncome.getOrDefault(week, 0.0);
 
             LinearLayout weekColumn = new LinearLayout(this);
             weekColumn.setOrientation(LinearLayout.VERTICAL);
@@ -253,7 +237,7 @@ public class AnalyticsActivity extends AppCompatActivity {
 
             // Bar height as percentage of max
             int barHeight = weekAmount > 0
-                    ? (int)(100 * weekAmount / maxExpense)
+                    ? (int)(100 * weekAmount / maxIncome)
                     : 5; // Minimum height for visibility
 
             // Create the bar
@@ -265,7 +249,7 @@ public class AnalyticsActivity extends AppCompatActivity {
 
             // Create the colored bar
             View coloredBar = new View(this);
-            coloredBar.setBackgroundColor(Color.parseColor("#F44336"));
+            coloredBar.setBackgroundColor(Color.parseColor("#4CAF50")); // Green for income
             LinearLayout.LayoutParams coloredBarParams = new LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     0, barHeight);
@@ -292,18 +276,18 @@ public class AnalyticsActivity extends AppCompatActivity {
         }
     }
 
-    private void updateCategoryBreakdown(Map<String, Double> categoryExpenses) {
-        categories.clear();
+    private void updateCategoryBreakdown(Map<String, Double> categoryIncome) {
+        incomeCategories.clear();
 
-        for (Map.Entry<String, Double> entry : categoryExpenses.entrySet()) {
-            categories.add(new CategoryModel(entry.getKey(), entry.getValue()));
+        for (Map.Entry<String, Double> entry : categoryIncome.entrySet()) {
+            incomeCategories.add(new IncomeCategoryModel(entry.getKey(), entry.getValue()));
         }
 
-        // Sort categories by expense amount (descending)
-        Collections.sort(categories, (c1, c2) ->
+        // Sort categories by income amount (descending)
+        Collections.sort(incomeCategories, (c1, c2) ->
                 Double.compare(c2.getAmount(), c1.getAmount()));
 
-        categoryAdapter.notifyDataSetChanged();
+        incomeCategoryAdapter.notifyDataSetChanged();
     }
 
     private String getString(Map<String, Object> data, String key) {
