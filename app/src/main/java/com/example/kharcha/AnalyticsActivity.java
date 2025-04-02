@@ -172,7 +172,7 @@ public class AnalyticsActivity extends AppCompatActivity {
                                     }
 
                                     // Add to category expenses
-                                    String expenseCategory = category != null ? category : "Other";
+                                    String expenseCategory = title != null ? title : "Other";
                                     if (!categoryExpenses.containsKey(expenseCategory)) {
                                         categoryExpenses.put(expenseCategory, amount);
                                     } else {

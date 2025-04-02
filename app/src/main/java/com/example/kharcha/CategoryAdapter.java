@@ -38,7 +38,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
     private void calculateTotal() {
         total = 0;
         for (CategoryModel category : categories) {
-            total += category.getAmount();
+            total +=category.getAmount();
         }
     }
 
@@ -55,14 +55,23 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         holder.tvCategoryName.setText(category.getName());
         holder.tvAmount.setText("₹" + String.format("%.2f", category.getAmount()));
 
-        double percentage = category.getPercentage(total);
+        // 🔹 Ensure `total` is recalculated before using it
+        double totalAmount = 0;
+        for (CategoryModel cat : categories) {
+            totalAmount += cat.getAmount();
+        }
+
+        // 🔹 Compute percentage safely
+        double percentage = (totalAmount > 0) ? ((category.getAmount() / totalAmount) * 100) : 0;
         holder.tvPercentage.setText(String.format("%.1f%%", percentage));
 
+        // 🔹 Update progress bar
         holder.progressBar.setProgress((int) percentage);
         holder.progressBar.setProgressTintList(
                 android.content.res.ColorStateList.valueOf(
                         CATEGORY_COLORS[position % CATEGORY_COLORS.length]));
     }
+
 
     @Override
     public int getItemCount() {
