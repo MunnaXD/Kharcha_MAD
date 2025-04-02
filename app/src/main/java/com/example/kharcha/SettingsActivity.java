@@ -24,6 +24,18 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        LinearLayout setBudgetItem = findViewById(R.id.budgetSettingItem); // You'll need to add this ID to your layout XML
+
+        // Set click listener for the budget item
+        setBudgetItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Launch the Budget Activity
+                Intent intent = new Intent(SettingsActivity.this, BudgetActivity.class);
+                startActivity(intent);
+            }
+        });
+
         // Initialize Logout Button
         btnLogout = findViewById(R.id.btnLogout);
         btnLogout.setOnClickListener(new View.OnClickListener() {

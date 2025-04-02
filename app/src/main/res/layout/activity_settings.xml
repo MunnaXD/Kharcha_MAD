@@ -228,6 +228,7 @@
                 android:layout_height="5dp" />
 
             <LinearLayout
+                android:id="@+id/budgetSettingItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/settings_item_bg"
